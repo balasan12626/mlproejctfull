@@ -6,6 +6,7 @@ from datetime import timedelta
 from typing import Optional
 import os
 import google.generativeai as genai
+from crewai import Agent, Task, Crew
 import pathlib
 
 from models import UserCreate, UserLogin, Token, AIRequest, AIResponse
@@ -85,11 +86,50 @@ async def hello():
 @app.post("/api/ai/generate", response_model=AIResponse)
 async def generate_ai_response(request: AIRequest):
     try:
-        response = gemini_model.generate_content(request.prompt)
+        researcher_agent = Agent(
+            role='Senior Research Analyst',
+            goal='Research and analyze information to provide accurate insights',
+            backstory='You are an expert research analyst with deep knowledge across multiple domains. You excel at finding accurate information and providing well-reasoned insights.',
+            verbose=False,
+            allow_delegation=False
+        )
+        
+        writer_agent = Agent(
+            role='Content Writer',
+            goal='Transform research into clear, engaging, and helpful responses',
+            backstory='You are a skilled content writer who excels at making complex information accessible and easy to understand. You create responses that are both informative and engaging.',
+            verbose=False,
+            allow_delegation=False
+        )
+        
+        research_task = Task(
+            description=f'Research and analyze this query: {request.prompt}. Provide detailed findings and key insights.',
+            agent=researcher_agent,
+            expected_output='A comprehensive analysis with key findings and insights about the query'
+        )
+        
+        writing_task = Task(
+            description=f'Based on the research findings, create a clear, helpful, and engaging response to: {request.prompt}',
+            agent=writer_agent,
+            expected_output='A well-written, user-friendly response that addresses the query effectively'
+        )
+        
+        crew = Crew(
+            agents=[researcher_agent, writer_agent],
+            tasks=[research_task, writing_task],
+            verbose=False
+        )
+        
+        crew_result = crew.kickoff()
+        final_response = str(crew_result)
+        
+        gemini_response = gemini_model.generate_content(
+            f"Refine and polish this response to make it even better: {final_response}"
+        )
         
         return AIResponse(
-            response=response.text,
-            model="Gemini 2.5 Flash"
+            response=gemini_response.text,
+            model="CrewAI Agents + Gemini 2.5 Flash"
         )
     except Exception as e:
         raise HTTPException(

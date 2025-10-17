@@ -39,7 +39,7 @@ function AIChat() {
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
       <div className="bg-gradient-to-r from-primary-600 to-indigo-600 p-6">
         <h2 className="text-2xl font-bold text-white">AI Chat Assistant</h2>
-        <p className="text-primary-100">Powered by Gemini 2.5 Flash</p>
+        <p className="text-primary-100">Powered by CrewAI Agents + Gemini 2.5 Flash</p>
       </div>
 
       <div className="p-6">

@@ -1,7 +1,7 @@
 # Full-Stack AI Application
 
 ## Overview
-A complete full-stack web application built with FastAPI backend and React frontend, featuring AI capabilities powered by Google Gemini 2.5 Flash, with a clean and modern interface for instant AI interactions.
+A complete full-stack web application built with FastAPI backend and React frontend, featuring advanced AI capabilities powered by CrewAI agents working together with Google Gemini 2.5 Flash, providing intelligent and well-researched responses through a clean and modern interface.
 
 ## Tech Stack
 
@@ -10,6 +10,7 @@ A complete full-stack web application built with FastAPI backend and React front
 - **Uvicorn**: ASGI server
 - **Python-Jose**: JWT token generation and validation
 - **Passlib**: Password hashing with bcrypt
+- **CrewAI**: Multi-agent AI orchestration system
 - **Google Generative AI**: Gemini 2.5 Flash model integration
 
 ### Frontend
@@ -56,9 +57,12 @@ fullstack-ai-app/
 - Token-based session management
 
 ### AI Integration
-- **Gemini 2.5 Flash**: Google's latest multimodal AI model (direct integration)
-- Real-time AI chat interface
-- Fast and intelligent responses
+- **CrewAI Agents**: Multi-agent AI system with specialized roles
+  - Research Analyst Agent: Analyzes and researches queries
+  - Content Writer Agent: Creates clear, engaging responses
+- **Gemini 2.5 Flash**: Google's latest multimodal AI model for final refinement
+- Real-time AI chat interface with agent collaboration
+- Intelligent, well-researched responses
 - No authentication required
 
 ### API Endpoints
@@ -112,12 +116,15 @@ The application runs automatically via the configured workflow. The workflow:
 - Environment variable validation at startup
 
 ## Recent Changes
-- 2025-10-17: Initial project setup
+- 2025-10-17: Initial project setup and updates
   - Created FastAPI backend with JWT authentication
-  - Integrated Gemini 2.5 Flash (direct integration, removed CrewAI)
+  - Integrated CrewAI multi-agent system with Gemini 2.5 Flash
+  - Implemented two specialized AI agents:
+    - Research Analyst: Analyzes and researches user queries
+    - Content Writer: Creates clear, engaging responses
   - Built React frontend with Tailwind CSS
   - Configured automatic build and deployment
   - Implemented secure environment variable management
   - Added autocomplete attributes for better UX and security
   - Removed login/registration pages for direct access
-  - Simplified AI integration to use only Gemini LLM
+  - Enhanced AI responses through agent collaboration
