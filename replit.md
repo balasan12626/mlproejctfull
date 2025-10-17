@@ -58,18 +58,16 @@ fullstack-ai-app/
 - Token-based session management
 
 ### AI Integration - Code Analyzer
-- **CrewAI Agents**: Multi-agent AI system with specialized code analysis roles
-  - **Code Analyzer Agent**: Expert code analyst that:
+- **CrewAI Agent**: Single optimized AI agent for maximum efficiency
+  - **Code Expert Agent**: World-class code analyst that:
     - Executes Python code and shows output
     - Rates code quality out of 10 (e.g., "8/10")
     - Calculates quality percentage out of 100% (e.g., "85%")
     - Provides 10 different logic variations with same result
-    - Uses similar/related logic patterns
-  - **Multi-Language Expert Agent**: Polyglot programmer that:
-    - Translates Python code to 10+ languages
-    - Supports: Java, JavaScript, Kotlin, Ruby, C, C++, Go, Rust, Swift, TypeScript
-    - Follows best practices for each language
-- **Gemini 2.5 Flash**: Google's latest AI model for final formatting and polish
+    - Offers multi-language translation (Java, JavaScript, C++, Kotlin, Ruby, Go, Rust, Swift, TypeScript, C)
+    - Provides 10 variations in requested language
+- **Gemini 2.5 Flash**: Google's latest AI model (gemini-2.0-flash-exp)
+- **Optimized for Free Tier**: Reduced API calls to stay within 50 requests/day limit
 - Real-time code analysis interface
 - Comprehensive code quality assessment
 - No authentication required
@@ -126,13 +124,17 @@ The application runs automatically via the configured workflow. The workflow:
 - Environment variable validation at startup
 
 ## Recent Changes
+- 2025-10-17: API Optimization & Error Fixes
+  - **Fixed ThreadPoolExecutor Error**: Resolved "cannot schedule new futures after shutdown" by keeping executor context open
+  - **Reduced API Calls**: Optimized from 2 agents + polishing to 1 agent (50% fewer API calls)
+  - **Single Agent Architecture**: Combined Code Analyzer + Multi-Language Expert into one efficient agent
+  - **Free Tier Optimization**: Stays within Gemini's 50 requests/day limit
+  - **Removed Redundant Polishing**: CrewAI output is already well-formatted, no need for extra Gemini call
+
 - 2025-10-17: Major UI Overhaul & Performance Improvements
   - **DeepSeek-Style UI**: Complete redesign with clean, full-page chat interface
   - **Dark/Light Theme**: Added theme toggle with dark mode as default
   - **Async Backend**: Implemented async/await with ThreadPoolExecutor for fast responses
   - **Code Highlighting**: Added react-syntax-highlighter with dark code blocks
   - **Copy Buttons**: Easy copy-to-clipboard for all code blocks
-  - **Agent Logic Update**:
-    - Code Analyzer Agent: Provides 10 Python variations first
-    - Multi-Language Expert: Asks user for language preference, then provides 10 variations in that language
   - **Performance**: Non-blocking AI execution for ChatGPT/Gemini-like speed
