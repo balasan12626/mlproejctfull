@@ -44,7 +44,7 @@ function Dashboard() {
               {loading ? 'Connecting...' : backendMessage}
             </p>
             <p className="text-gray-600 mt-2">
-              Backend: FastAPI | Frontend: React + Vite | AI: Gemini 2.5 Flash + CrewAI
+              Backend: FastAPI | Frontend: React + Vite | AI: Gemini 2.5 Flash
             </p>
           </div>
         </div>

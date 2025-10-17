@@ -1,0 +1,141 @@
+You are my coding assistant. I want you to create a LeetCode-style AI Coding Platform inside Replit that uses:
+
+🧩 Tech Stack:
+- Backend: FastAPI (Python)
+- Frontend: React.js (Vite)
+- AI Model: Gemini API (Google Generative AI) or CrewAI agents
+- Language Translation Support: Go, Java, JavaScript, C, C++, Kotlin
+- Code Rating Logic: Rate user code 0–10 based on logic, clarity, and efficiency
+- Code Editor: Monaco Editor (like VS Code / LeetCode style)
+
+---
+
+🎯 Project Goal:
+When a user writes a Python program in the editor and clicks “Run”:
+1. The backend executes the code safely.
+2. The Gemini LLM:
+   - Rates the code from 1–10.
+   - Generates 5 alternative implementations of the same logic (different styles).
+   - Translates the Python code into 6 other languages: Go, Java, JavaScript, C, C++, and Kotlin.
+3. The frontend displays:
+   - The **output** of the code.
+   - The **AI rating** (0–10).
+   - The **alternative versions** (tabbed or collapsible view).
+   - The **translated code** for all languages.
+4. The UI should look like a **LeetCode interface**:
+   - Left panel → Problem description and user code editor
+   - Right panel → AI output area with tabs:
+     - “Result”
+     - “Rating”
+     - “Other Solutions”
+     - “Code in Other Languages”
+   - Bottom section → “Run” button to execute + get AI feedback
+
+---
+
+⚙️ Functional Requirements:
+- Use FastAPI to handle:
+  - `/run` → executes Python code safely using subprocess.
+  - `/ai` → sends the code to Gemini API or CrewAI for rating + alternate solutions + translations.
+- Use React for frontend with components:
+  - `Editor.jsx` → Monaco editor for code input.
+  - `ResultPanel.jsx` → display code output and rating.
+  - `Tabs.jsx` → switch between output, rating, other solutions, and translations.
+  - `RunButton.jsx` → triggers the backend call.
+- Use TailwindCSS or ShadCN UI for design.
+
+---
+
+📂 Folder Structure to Generate:
+fullstack-leetcode-ai/
+│
+├── main.py                        ← FastAPI backend with routes `/run` and `/ai`
+├── requirements.txt                ← fastapi, uvicorn, google-generativeai, crewai, subprocess
+├── .replit                         ← Replit run config
+├── replit.nix                      ← Python + Node environment
+├── run.sh                          ← Builds frontend + runs backend
+│
+└── frontend/
+    ├── package.json
+    ├── vite.config.js
+    ├── src/
+    │   ├── App.jsx
+    │   ├── components/
+    │   │   ├── Editor.jsx
+    │   │   ├── ResultPanel.jsx
+    │   │   ├── Tabs.jsx
+    │   │   └── RunButton.jsx
+    │   ├── styles.css
+    │   └── api.js                  ← axios config for backend
+    └── public/
+
+---
+
+🧠 Backend Logic:
+- `/run` route:
+  - Executes user’s Python code in a subprocess with timeout = 5s.
+  - Returns `stdout` or `stderr`.
+
+- `/ai` route:
+  - Sends prompt to Gemini:
+    - “Rate this code from 1–10 based on logic, clarity, and performance.”
+    - “Generate 5 different versions of this code using same logic but different structure.”
+    - “Translate this code into Go, Java, JavaScript, C, C++, Kotlin.”
+  - Returns all results in JSON:
+    ```json
+    {
+      "rating": 8,
+      "alternatives": [...],
+      "translations": {...}
+    }
+    ```
+
+---
+
+🧠 Gemini / CrewAI Prompt Example:
+Use this when generating AI output:
+"Rate this Python code on correctness, clarity, and performance (0–10).
+Then rewrite the code in 5 different valid styles.
+Finally, translate it into Go, Java, JavaScript, C, C++, and Kotlin."
+
+---
+
+💻 Frontend Flow:
+1. User writes Python code → clicks “Run”
+2. React sends code to FastAPI backend `/run`
+3. Backend returns output and sends code to `/ai`
+4. AI response shows:
+   - Rating (out of 10)
+   - 5 alternate versions
+   - Translations (Go, Java, JS, C, C++, Kotlin)
+5. Everything displays in a **LeetCode-like split layout**.
+
+---
+
+🎨 Design Requirements:
+- Dark theme similar to LeetCode UI
+- Monaco editor for coding area
+- Tabs or collapsible panels for AI outputs
+- Responsive layout with flexbox or grid
+
+---
+
+🧰 Run Configuration:
+- `.replit`: Runs `bash run.sh`
+- `run.sh`: Builds frontend (`npm run build`) then starts backend (`uvicorn main:app --host 0.0.0.0 --port 8000`)
+- `replit.nix`: Python 3.11 + Node.js 20
+
+---
+
+📈 Final Output:
+When user clicks “Run”:
+✅ Code executes → output shown  
+✅ Gemini AI → rating (0–10)  
+✅ AI → 5 different code versions  
+✅ AI → translations into 6 languages  
+✅ All results shown on right panel in LeetCode-style layout  
+
+---
+
+🧠 Goal:
+Build a full working prototype inside Replit AI with both FastAPI + React integrated, hosted under one Replit URL.

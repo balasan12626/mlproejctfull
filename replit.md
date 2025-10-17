@@ -1,7 +1,7 @@
 # Full-Stack AI Application
 
 ## Overview
-A complete full-stack web application built with FastAPI backend and React frontend, featuring AI capabilities powered by Google Gemini 2.5 Flash and CrewAI agents, with JWT-based authentication.
+A complete full-stack web application built with FastAPI backend and React frontend, featuring AI capabilities powered by Google Gemini 2.5 Flash, with a clean and modern interface for instant AI interactions.
 
 ## Tech Stack
 
@@ -11,7 +11,6 @@ A complete full-stack web application built with FastAPI backend and React front
 - **Python-Jose**: JWT token generation and validation
 - **Passlib**: Password hashing with bcrypt
 - **Google Generative AI**: Gemini 2.5 Flash model integration
-- **CrewAI**: AI agent orchestration
 
 ### Frontend
 - **React 18**: UI library
@@ -57,10 +56,10 @@ fullstack-ai-app/
 - Token-based session management
 
 ### AI Integration
-- **Gemini 2.5 Flash**: Google's latest multimodal AI model
-- **CrewAI Agents**: Intelligent AI agents for task automation
+- **Gemini 2.5 Flash**: Google's latest multimodal AI model (direct integration)
 - Real-time AI chat interface
-- Context-aware responses
+- Fast and intelligent responses
+- No authentication required
 
 ### API Endpoints
 - `POST /api/register`: User registration
@@ -115,8 +114,10 @@ The application runs automatically via the configured workflow. The workflow:
 ## Recent Changes
 - 2025-10-17: Initial project setup
   - Created FastAPI backend with JWT authentication
-  - Integrated Gemini 2.5 Flash and CrewAI
+  - Integrated Gemini 2.5 Flash (direct integration, removed CrewAI)
   - Built React frontend with Tailwind CSS
   - Configured automatic build and deployment
   - Implemented secure environment variable management
   - Added autocomplete attributes for better UX and security
+  - Removed login/registration pages for direct access
+  - Simplified AI integration to use only Gemini LLM

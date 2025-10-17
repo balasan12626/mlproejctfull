@@ -6,7 +6,6 @@ from datetime import timedelta
 from typing import Optional
 import os
 import google.generativeai as genai
-from crewai import Agent, Task, Crew
 import pathlib
 
 from models import UserCreate, UserLogin, Token, AIRequest, AIResponse
@@ -86,36 +85,11 @@ async def hello():
 @app.post("/api/ai/generate", response_model=AIResponse)
 async def generate_ai_response(request: AIRequest):
     try:
-        researcher = Agent(
-            role='AI Research Assistant',
-            goal='Provide accurate and helpful information based on user queries',
-            backstory='You are an expert AI assistant with deep knowledge across various domains.',
-            verbose=True,
-            allow_delegation=False
-        )
-        
-        task = Task(
-            description=f'Answer the following query: {request.prompt}',
-            agent=researcher,
-            expected_output='A clear and helpful response to the user query'
-        )
-        
-        crew = Crew(
-            agents=[researcher],
-            tasks=[task],
-            verbose=True
-        )
-        
-        crew_result = crew.kickoff()
-        crew_response = str(crew_result)
-        
-        response = gemini_model.generate_content(
-            f"Based on this analysis: {crew_response}\n\nProvide a refined and user-friendly response to: {request.prompt}"
-        )
+        response = gemini_model.generate_content(request.prompt)
         
         return AIResponse(
             response=response.text,
-            model="gemini-2.0-flash-exp with CrewAI"
+            model="Gemini 2.5 Flash"
         )
     except Exception as e:
         raise HTTPException(
