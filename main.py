@@ -144,16 +144,19 @@ async def generate_ai_response(request: AIRequest):
         )
         
         loop = asyncio.get_event_loop()
+        
+        def run_crew():
+            return crew.kickoff()
+        
+        def run_gemini(response_text):
+            return gemini_model.generate_content(
+                f"Format and polish this code analysis response with clear sections: {response_text}"
+            )
+        
         with ThreadPoolExecutor() as executor:
-            crew_result = await loop.run_in_executor(executor, crew.kickoff)
-        
-        final_response = str(crew_result)
-        
-        gemini_response = await loop.run_in_executor(
-            executor, 
-            gemini_model.generate_content,
-            f"Format and polish this code analysis response with clear sections: {final_response}"
-        )
+            crew_result = await loop.run_in_executor(executor, run_crew)
+            final_response = str(crew_result)
+            gemini_response = await loop.run_in_executor(executor, run_gemini, final_response)
         
         return AIResponse(
             response=gemini_response.text,
