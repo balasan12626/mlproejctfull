@@ -89,39 +89,61 @@ async def generate_ai_response(request: AIRequest):
         os.environ["OPENAI_API_KEY"] = GEMINI_API_KEY
         os.environ["OPENAI_MODEL_NAME"] = "gemini/gemini-2.0-flash-exp"
         
-        researcher_agent = Agent(
-            role='Senior Research Analyst',
-            goal='Research and analyze information to provide accurate insights',
-            backstory='You are an expert research analyst with deep knowledge across multiple domains. You excel at finding accurate information and providing well-reasoned insights.',
+        code_analyzer_agent = Agent(
+            role='Senior Code Analysis Expert',
+            goal='Analyze Python code, execute it, provide output, rate code quality, and suggest 10 different logic variations',
+            backstory='You are an expert code analyst with 20+ years of experience in software engineering. You excel at analyzing code logic, identifying patterns, providing quality ratings (out of 10), percentage scores (out of 100%), and suggesting alternative implementations with the same result.',
             verbose=False,
             allow_delegation=False,
             llm="gemini/gemini-2.0-flash-exp"
         )
         
-        writer_agent = Agent(
-            role='Content Writer',
-            goal='Transform research into clear, engaging, and helpful responses',
-            backstory='You are a skilled content writer who excels at making complex information accessible and easy to understand. You create responses that are both informative and engaging.',
+        multilanguage_expert_agent = Agent(
+            role='Multi-Language Programming Expert',
+            goal='Translate Python code to multiple programming languages including Java, JavaScript, Kotlin, Ruby, C, C++, Go, Rust, Swift, and more',
+            backstory='You are a polyglot programmer fluent in all major programming languages. You can translate code logic across languages while maintaining the same functionality and best practices for each language.',
             verbose=False,
             allow_delegation=False,
             llm="gemini/gemini-2.0-flash-exp"
         )
         
-        research_task = Task(
-            description=f'Research and analyze this query: {request.prompt}. Provide detailed findings and key insights.',
-            agent=researcher_agent,
-            expected_output='A comprehensive analysis with key findings and insights about the query'
+        code_analysis_task = Task(
+            description=f'''Analyze this query/code: {request.prompt}
+            
+            If Python code is provided:
+            1. Execute the code and show the output
+            2. Rate the code quality out of 10 (e.g., "Rating: 8/10")
+            3. Calculate code quality percentage out of 100% (e.g., "Quality: 85%")
+            4. Provide 10 different logic variations of the same code that produce the same result
+            5. Use similar/related logic patterns for variations
+            6. Keep all variations in Python
+            
+            If it's a general query, provide helpful insights.''',
+            agent=code_analyzer_agent,
+            expected_output='Code output, ratings (X/10), percentage (X%), and 10 logic variations with same result'
         )
         
-        writing_task = Task(
-            description=f'Based on the research findings, create a clear, helpful, and engaging response to: {request.prompt}',
-            agent=writer_agent,
-            expected_output='A well-written, user-friendly response that addresses the query effectively'
+        translation_task = Task(
+            description=f'''Based on the code analysis, translate the original Python code to:
+            1. Java
+            2. JavaScript
+            3. Kotlin
+            4. Ruby
+            5. C
+            6. C++
+            7. Go
+            8. Rust
+            9. Swift
+            10. TypeScript
+            
+            Provide clean, runnable code for each language following best practices.''',
+            agent=multilanguage_expert_agent,
+            expected_output='Code translations in 10+ programming languages'
         )
         
         crew = Crew(
-            agents=[researcher_agent, writer_agent],
-            tasks=[research_task, writing_task],
+            agents=[code_analyzer_agent, multilanguage_expert_agent],
+            tasks=[code_analysis_task, translation_task],
             verbose=False
         )
         
@@ -129,12 +151,12 @@ async def generate_ai_response(request: AIRequest):
         final_response = str(crew_result)
         
         gemini_response = gemini_model.generate_content(
-            f"Refine and polish this response to make it even better: {final_response}"
+            f"Format and polish this code analysis response with clear sections: {final_response}"
         )
         
         return AIResponse(
             response=gemini_response.text,
-            model="CrewAI Agents + Gemini 2.5 Flash"
+            model="Code Analyzer + Multi-Language Expert + Gemini 2.5 Flash"
         )
     except Exception as e:
         raise HTTPException(

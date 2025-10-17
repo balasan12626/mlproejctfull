@@ -38,8 +38,8 @@ function AIChat() {
   return (
     <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
       <div className="bg-gradient-to-r from-primary-600 to-indigo-600 p-6">
-        <h2 className="text-2xl font-bold text-white">AI Chat Assistant</h2>
-        <p className="text-primary-100">Powered by CrewAI Agents + Gemini 2.5 Flash</p>
+        <h2 className="text-2xl font-bold text-white">AI Code Analyzer</h2>
+        <p className="text-primary-100">Upload Python code → Get ratings, 10 variations + multi-language translations!</p>
       </div>
 
       <div className="p-6">
@@ -47,9 +47,11 @@ function AIChat() {
           {messages.length === 0 ? (
             <div className="flex items-center justify-center h-full">
               <p className="text-gray-500 text-center">
-                Start a conversation with the AI assistant.
-                <br />
-                Ask anything and get intelligent responses!
+                Paste your Python code and get:
+                <br />• Code output & ratings (X/10)
+                <br />• Quality percentage (X%)
+                <br />• 10 different logic variations
+                <br />• Translations to Java, JavaScript, C++, Kotlin, Ruby & more!
               </p>
             </div>
           ) : (

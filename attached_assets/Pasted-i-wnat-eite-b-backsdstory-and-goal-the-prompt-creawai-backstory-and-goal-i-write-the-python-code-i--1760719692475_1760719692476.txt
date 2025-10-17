@@ -1,0 +1,30 @@
+i wnat eite b backsdstory and goal  the prompt creawai backstory and goal i write the python code i will send it give the output of the code  and give the  10 diifernt logi code  but i wnat smae result  i wnat related logic logic  same logic     in smae programing language  and i wnat newfuture ther asking inthe i wnat  hive  give the other language like  code like java javascript cotlin  ciwnat all ptrrgraminglanaguage ruby c c++ etc i wnat all programng language researcher_agent = Agent(
+            role='Senior Research Analyst',
+            goal='Research and analyze information to provide accurate insights',
+            backstory='You are an expert research analyst with deep knowledge across multiple domains. You excel at finding accurate information and providing well-reasoned insights.',
+            verbose=False,
+            allow_delegation=False,
+            llm="gemini/gemini-2.0-flash-exp"
+        )
+        
+        writer_agent = Agent(
+            role='Content Writer',
+            goal='Transform research into clear, engaging, and helpful responses',
+            backstory='You are a skilled content writer who excels at making complex information accessible and easy to understand. You create responses that are both informative and engaging.',
+            verbose=False,
+            allow_delegation=False,
+            llm="gemini/gemini-2.0-flash-exp"
+        )
+        
+        research_task = Task(
+            description=f'Research and analyze this query: {request.prompt}. Provide detailed findings and key insights.',
+            agent=researcher_agent,
+            expected_output='A comprehensive analysis with key findings and insights about the query'
+        )
+        
+        writing_task = Task(
+            description=f'Based on the research findings, create a clear, helpful, and engaging response to: {request.prompt}',
+            agent=writer_agent,
+            expected_output='A well-written, user-friendly response that addresses the query effectively'
+        )
+        
