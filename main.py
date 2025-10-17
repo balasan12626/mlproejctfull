@@ -5,6 +5,8 @@ from fastapi.responses import FileResponse
 from datetime import timedelta
 from typing import Optional
 import os
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 import google.generativeai as genai
 from crewai import Agent, Task, Crew
 import pathlib
@@ -90,55 +92,49 @@ async def generate_ai_response(request: AIRequest):
         os.environ["OPENAI_MODEL_NAME"] = "gemini/gemini-2.0-flash-exp"
         
         code_analyzer_agent = Agent(
-            role='Senior Code Analysis Expert',
-            goal='Analyze Python code, execute it, provide output, rate code quality, and suggest 10 different logic variations',
-            backstory='You are an expert code analyst with 20+ years of experience in software engineering. You excel at analyzing code logic, identifying patterns, providing quality ratings (out of 10), percentage scores (out of 100%), and suggesting alternative implementations with the same result.',
+            role='Expert Python Code Analyst',
+            goal='Analyze Python code, execute it, provide output with ratings, and generate 10 different logic variations in the SAME Python language',
+            backstory='You are a Python expert with 20+ years of experience. When given Python code, you execute it, rate its quality (X/10 and X%), and provide 10 different logic variations in Python using similar patterns. All variations must produce the same result but use different approaches.',
             verbose=False,
             allow_delegation=False,
             llm="gemini/gemini-2.0-flash-exp"
         )
         
         multilanguage_expert_agent = Agent(
-            role='Multi-Language Programming Expert',
-            goal='Translate Python code to multiple programming languages including Java, JavaScript, Kotlin, Ruby, C, C++, Go, Rust, Swift, and more',
-            backstory='You are a polyglot programmer fluent in all major programming languages. You can translate code logic across languages while maintaining the same functionality and best practices for each language.',
+            role='Multi-Language Code Translator',
+            goal='Ask user which language they want, then provide 10 different logic variations in that specific language',
+            backstory='You are a polyglot programmer. After the Python analysis, you ask: "Do you want this code in another language? (e.g., Java, JavaScript, C++, etc.)". If they specify a language like Java, you provide 10 different logic variations in Java with the same result.',
             verbose=False,
             allow_delegation=False,
             llm="gemini/gemini-2.0-flash-exp"
         )
         
         code_analysis_task = Task(
-            description=f'''Analyze this query/code: {request.prompt}
+            description=f'''Analyze this Python code: {request.prompt}
             
-            If Python code is provided:
-            1. Execute the code and show the output
-            2. Rate the code quality out of 10 (e.g., "Rating: 8/10")
-            3. Calculate code quality percentage out of 100% (e.g., "Quality: 85%")
-            4. Provide 10 different logic variations of the same code that produce the same result
-            5. Use similar/related logic patterns for variations
-            6. Keep all variations in Python
+            1. Execute the code and show the OUTPUT
+            2. Rate code quality: X/10 (e.g., "8/10")
+            3. Calculate percentage: X% (e.g., "85%")
+            4. Provide 10 DIFFERENT LOGIC variations in PYTHON ONLY (same result, different logic)
+            5. Each variation must use similar/related logic patterns
+            6. Keep ALL 10 variations in Python language
             
-            If it's a general query, provide helpful insights.''',
+            Format properly with clear sections.''',
             agent=code_analyzer_agent,
-            expected_output='Code output, ratings (X/10), percentage (X%), and 10 logic variations with same result'
+            expected_output='Code output, rating (X/10), percentage (X%), and 10 Python logic variations'
         )
         
         translation_task = Task(
-            description=f'''Based on the code analysis, translate the original Python code to:
-            1. Java
-            2. JavaScript
-            3. Kotlin
-            4. Ruby
-            5. C
-            6. C++
-            7. Go
-            8. Rust
-            9. Swift
-            10. TypeScript
+            description=f'''After Python analysis:
             
-            Provide clean, runnable code for each language following best practices.''',
+            1. Ask: "Do you want this code in another language? (Java, JavaScript, C++, Kotlin, Ruby, Go, Rust, Swift, TypeScript, C, etc.)"
+            2. If user specifies a language (e.g., "Java"), provide 10 different logic variations in that ONE language
+            3. All 10 variations must produce same result but use different logic patterns
+            4. If user wants multiple languages, provide 10 variations for EACH specified language
+            
+            Provide clean, well-formatted code with proper syntax.''',
             agent=multilanguage_expert_agent,
-            expected_output='Code translations in 10+ programming languages'
+            expected_output='Question asking for language preference, then 10 variations in requested language'
         )
         
         crew = Crew(
@@ -147,10 +143,15 @@ async def generate_ai_response(request: AIRequest):
             verbose=False
         )
         
-        crew_result = crew.kickoff()
+        loop = asyncio.get_event_loop()
+        with ThreadPoolExecutor() as executor:
+            crew_result = await loop.run_in_executor(executor, crew.kickoff)
+        
         final_response = str(crew_result)
         
-        gemini_response = gemini_model.generate_content(
+        gemini_response = await loop.run_in_executor(
+            executor, 
+            gemini_model.generate_content,
             f"Format and polish this code analysis response with clear sections: {final_response}"
         )
         
