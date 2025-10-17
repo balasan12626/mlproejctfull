@@ -28,7 +28,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyAH1Uh5NnwxIucRfQQqzkTv3GSFnsJIaIw")
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+
+if not GEMINI_API_KEY:
+    raise ValueError(
+        "GEMINI_API_KEY environment variable is required. "
+        "Please set it in your Replit Secrets or environment variables."
+    )
+
 genai.configure(api_key=GEMINI_API_KEY)
 
 gemini_model = genai.GenerativeModel('gemini-2.0-flash-exp')
