@@ -76,8 +76,11 @@ fullstack-ai-app/
 - Beautiful gradient designs
 
 ## Environment Variables
-- `SESSION_SECRET`: Secret key for JWT token signing (managed by Replit)
-- `GEMINI_API_KEY`: Google Gemini API key (default: AIzaSyAH1Uh5NnwxIucRfQQqzkTv3GSFnsJIaIw)
+- `SESSION_SECRET`: Secret key for JWT token signing (managed by Replit Secrets)
+- `GEMINI_API_KEY`: Google Gemini API key (required, managed by Replit Secrets)
+
+### Security Note
+All API keys and secrets are stored securely in Replit Secrets and never hardcoded in the source code. The application will fail to start if required environment variables are missing.
 
 ## Running the Application
 The application runs automatically via the configured workflow. The workflow:
@@ -99,9 +102,21 @@ The application runs automatically via the configured workflow. The workflow:
 - **Vite for frontend**: Fast build times and modern development experience
 - **Tailwind CSS**: Rapid UI development with utility classes
 
+## Security Best Practices
+- No hardcoded API keys or secrets in source code
+- All sensitive credentials stored in Replit Secrets
+- Password hashing with bcrypt (cost factor 12)
+- JWT tokens with 30-minute expiration
+- HTTPS-only in production
+- Input validation on all API endpoints
+- Form autocomplete attributes for password managers
+- Environment variable validation at startup
+
 ## Recent Changes
 - 2025-10-17: Initial project setup
   - Created FastAPI backend with JWT authentication
   - Integrated Gemini 2.5 Flash and CrewAI
   - Built React frontend with Tailwind CSS
   - Configured automatic build and deployment
+  - Implemented secure environment variable management
+  - Added autocomplete attributes for better UX and security

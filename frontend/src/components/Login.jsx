@@ -53,6 +53,7 @@ function Login({ onLogin }) {
               onChange={(e) => setUsername(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
               placeholder="Enter your username"
+              autoComplete="username"
               required
             />
           </div>
@@ -68,6 +69,7 @@ function Login({ onLogin }) {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
               placeholder="Enter your password"
+              autoComplete="current-password"
               required
             />
           </div>

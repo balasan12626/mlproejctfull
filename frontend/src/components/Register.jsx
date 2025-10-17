@@ -62,6 +62,7 @@ function Register({ onRegister }) {
               onChange={(e) => setUsername(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
               placeholder="Choose a username"
+              autoComplete="username"
               required
             />
           </div>
@@ -77,6 +78,7 @@ function Register({ onRegister }) {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
               placeholder="Enter your email"
+              autoComplete="email"
               required
             />
           </div>
@@ -92,6 +94,7 @@ function Register({ onRegister }) {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
               placeholder="Create a password"
+              autoComplete="new-password"
               required
             />
           </div>
@@ -107,6 +110,7 @@ function Register({ onRegister }) {
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition"
               placeholder="Confirm your password"
+              autoComplete="new-password"
               required
             />
           </div>

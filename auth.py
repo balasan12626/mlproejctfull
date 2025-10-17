@@ -4,7 +4,14 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 import os
 
-SECRET_KEY = os.environ.get("SESSION_SECRET", "your-secret-key-change-in-production")
+SECRET_KEY = os.environ.get("SESSION_SECRET")
+
+if not SECRET_KEY:
+    raise ValueError(
+        "SESSION_SECRET environment variable is required. "
+        "Please set it in your Replit Secrets or environment variables."
+    )
+
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
