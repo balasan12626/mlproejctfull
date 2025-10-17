@@ -86,12 +86,16 @@ async def hello():
 @app.post("/api/ai/generate", response_model=AIResponse)
 async def generate_ai_response(request: AIRequest):
     try:
+        os.environ["OPENAI_API_KEY"] = GEMINI_API_KEY
+        os.environ["OPENAI_MODEL_NAME"] = "gemini/gemini-2.0-flash-exp"
+        
         researcher_agent = Agent(
             role='Senior Research Analyst',
             goal='Research and analyze information to provide accurate insights',
             backstory='You are an expert research analyst with deep knowledge across multiple domains. You excel at finding accurate information and providing well-reasoned insights.',
             verbose=False,
-            allow_delegation=False
+            allow_delegation=False,
+            llm="gemini/gemini-2.0-flash-exp"
         )
         
         writer_agent = Agent(
@@ -99,7 +103,8 @@ async def generate_ai_response(request: AIRequest):
             goal='Transform research into clear, engaging, and helpful responses',
             backstory='You are a skilled content writer who excels at making complex information accessible and easy to understand. You create responses that are both informative and engaging.',
             verbose=False,
-            allow_delegation=False
+            allow_delegation=False,
+            llm="gemini/gemini-2.0-flash-exp"
         )
         
         research_task = Task(
