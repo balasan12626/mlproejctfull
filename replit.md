@@ -1,0 +1,107 @@
+# Full-Stack AI Application
+
+## Overview
+A complete full-stack web application built with FastAPI backend and React frontend, featuring AI capabilities powered by Google Gemini 2.5 Flash and CrewAI agents, with JWT-based authentication.
+
+## Tech Stack
+
+### Backend
+- **FastAPI**: Modern Python web framework
+- **Uvicorn**: ASGI server
+- **Python-Jose**: JWT token generation and validation
+- **Passlib**: Password hashing with bcrypt
+- **Google Generative AI**: Gemini 2.5 Flash model integration
+- **CrewAI**: AI agent orchestration
+
+### Frontend
+- **React 18**: UI library
+- **Vite**: Build tool and dev server
+- **Tailwind CSS**: Utility-first CSS framework
+- **React Router**: Client-side routing
+- **Axios**: HTTP client
+
+## Project Structure
+
+```
+fullstack-ai-app/
+├── main.py                    # FastAPI application with all routes
+├── models.py                  # Pydantic data models
+├── auth.py                    # JWT authentication utilities
+├── requirements.txt           # Python dependencies
+├── run.sh                     # Build and run script
+├── .gitignore                 # Git ignore patterns
+└── frontend/                  # React application
+    ├── package.json           # Node.js dependencies
+    ├── vite.config.js         # Vite configuration
+    ├── tailwind.config.js     # Tailwind CSS config
+    ├── postcss.config.js      # PostCSS config
+    ├── index.html             # HTML entry point
+    └── src/
+        ├── main.jsx           # React entry point
+        ├── App.jsx            # Main app component
+        ├── index.css          # Global styles
+        └── components/
+            ├── Login.jsx      # Login page
+            ├── Register.jsx   # Registration page
+            ├── Dashboard.jsx  # Main dashboard
+            └── AIChat.jsx     # AI chat interface
+```
+
+## Features
+
+### Authentication
+- User registration with email validation
+- Secure login with JWT tokens
+- Password hashing using bcrypt
+- Protected routes requiring authentication
+- Token-based session management
+
+### AI Integration
+- **Gemini 2.5 Flash**: Google's latest multimodal AI model
+- **CrewAI Agents**: Intelligent AI agents for task automation
+- Real-time AI chat interface
+- Context-aware responses
+
+### API Endpoints
+- `POST /api/register`: User registration
+- `POST /api/login`: User login
+- `GET /api/hello`: Health check endpoint
+- `POST /api/ai/generate`: AI response generation (protected)
+
+### Frontend Features
+- Modern, responsive UI with Tailwind CSS
+- Real-time chat interface
+- Authentication flow with protected routes
+- Loading states and error handling
+- Beautiful gradient designs
+
+## Environment Variables
+- `SESSION_SECRET`: Secret key for JWT token signing (managed by Replit)
+- `GEMINI_API_KEY`: Google Gemini API key (default: AIzaSyAH1Uh5NnwxIucRfQQqzkTv3GSFnsJIaIw)
+
+## Running the Application
+The application runs automatically via the configured workflow. The workflow:
+1. Installs frontend dependencies (npm install)
+2. Builds the React frontend (npm run build)
+3. Installs Python dependencies (pip install)
+4. Starts FastAPI server on port 5000
+
+## Development Notes
+- Frontend dev server configured to allow all hosts for Replit environment
+- CORS enabled for cross-origin requests
+- Static files served from FastAPI for production build
+- JWT tokens expire after 30 minutes
+
+## Architecture Decisions
+- **Single server deployment**: FastAPI serves both API and static frontend files
+- **In-memory user storage**: Using dictionary for user data (replace with database for production)
+- **JWT authentication**: Stateless authentication for scalability
+- **Vite for frontend**: Fast build times and modern development experience
+- **Tailwind CSS**: Rapid UI development with utility classes
+
+## Recent Changes
+- 2025-10-17: Initial project setup
+  - Created FastAPI backend with JWT authentication
+  - Integrated Gemini 2.5 Flash and CrewAI
+  - Built React frontend with Tailwind CSS
+  - Configured automatic build and deployment
