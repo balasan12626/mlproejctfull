@@ -16,9 +16,10 @@ A complete full-stack AI Code Analyzer application built with FastAPI backend an
 ### Frontend
 - **React 18**: UI library
 - **Vite**: Build tool and dev server
-- **Tailwind CSS**: Utility-first CSS framework
-- **React Router**: Client-side routing
+- **Tailwind CSS**: Utility-first CSS framework with dark mode support
 - **Axios**: HTTP client
+- **React Syntax Highlighter**: Code syntax highlighting with copy buttons
+- **React Markdown**: Markdown parsing for formatted responses
 
 ## Project Structure
 
@@ -80,11 +81,12 @@ fullstack-ai-app/
 - `POST /api/ai/generate`: AI response generation (protected)
 
 ### Frontend Features
-- Modern, responsive UI with Tailwind CSS
-- Real-time chat interface
-- Authentication flow with protected routes
-- Loading states and error handling
-- Beautiful gradient designs
+- **DeepSeek-Style UI**: Clean, full-page chat interface
+- **Dark/Light Theme Toggle**: Switch between themes with one click
+- **Code Syntax Highlighting**: Dark code blocks with language-specific highlighting
+- **Copy Code Buttons**: Easy-to-use copy buttons for each code block
+- **Async Responses**: Fast, non-blocking AI responses
+- **Modern Design**: Clean, minimal interface optimized for code analysis
 
 ## Environment Variables
 - `SESSION_SECRET`: Secret key for JWT token signing (managed by Replit Secrets)
@@ -124,12 +126,13 @@ The application runs automatically via the configured workflow. The workflow:
 - Environment variable validation at startup
 
 ## Recent Changes
-- 2025-10-17: Code Analyzer Implementation
-  - Transformed app into AI Code Analyzer
-  - Implemented specialized CrewAI agents:
-    - **Code Analyzer Agent**: Executes code, provides ratings (X/10), percentage (X%), and 10 logic variations
-    - **Multi-Language Expert Agent**: Translates Python to Java, JavaScript, Kotlin, Ruby, C, C++, Go, Rust, Swift, TypeScript
-  - Updated frontend UI to reflect code analysis features
-  - Added code quality assessment with ratings and percentages
-  - Integrated multi-language code translation system
-  - Configured Gemini 2.5 Flash for final response formatting
+- 2025-10-17: Major UI Overhaul & Performance Improvements
+  - **DeepSeek-Style UI**: Complete redesign with clean, full-page chat interface
+  - **Dark/Light Theme**: Added theme toggle with dark mode as default
+  - **Async Backend**: Implemented async/await with ThreadPoolExecutor for fast responses
+  - **Code Highlighting**: Added react-syntax-highlighter with dark code blocks
+  - **Copy Buttons**: Easy copy-to-clipboard for all code blocks
+  - **Agent Logic Update**:
+    - Code Analyzer Agent: Provides 10 Python variations first
+    - Multi-Language Expert: Asks user for language preference, then provides 10 variations in that language
+  - **Performance**: Non-blocking AI execution for ChatGPT/Gemini-like speed
