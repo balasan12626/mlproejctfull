@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import AIChat from './AIChat'
 
-function Dashboard({ onLogout }) {
+function Dashboard() {
   const [backendMessage, setBackendMessage] = useState('')
   const [loading, setLoading] = useState(true)
 
@@ -30,12 +30,6 @@ function Dashboard({ onLogout }) {
             <div className="flex items-center">
               <h1 className="text-2xl font-bold text-primary-600">AI Dashboard</h1>
             </div>
-            <button
-              onClick={onLogout}
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition duration-200"
-            >
-              Logout
-            </button>
           </div>
         </div>
       </nav>

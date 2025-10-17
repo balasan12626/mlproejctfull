@@ -84,16 +84,7 @@ async def hello():
     return {"message": "Hello from FastAPI backend!"}
 
 @app.post("/api/ai/generate", response_model=AIResponse)
-async def generate_ai_response(request: AIRequest, authorization: Optional[str] = None):
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated"
-        )
-    
-    token = authorization.replace("Bearer ", "")
-    username = get_current_user(token)
-    
+async def generate_ai_response(request: AIRequest):
     try:
         researcher = Agent(
             role='AI Research Assistant',

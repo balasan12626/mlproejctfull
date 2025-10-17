@@ -16,16 +16,7 @@ function AIChat() {
     setLoading(true)
 
     try {
-      const token = localStorage.getItem('token')
-      const response = await axios.post(
-        '/api/ai/generate',
-        { prompt: input },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      )
+      const response = await axios.post('/api/ai/generate', { prompt: input })
 
       const aiMessage = {
         role: 'assistant',
