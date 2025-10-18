@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, List
 
 class UserCreate(BaseModel):
     username: str
@@ -19,6 +19,9 @@ class TokenData(BaseModel):
 
 class AIRequest(BaseModel):
     prompt: str
+    source_language: Optional[str] = 'python'
+    num_variations: Optional[int] = 10
+    target_languages: Optional[List[str]] = []
     
 class AIResponse(BaseModel):
     response: str

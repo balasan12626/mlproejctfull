@@ -114,26 +114,53 @@ async def generate_ai_response(request: AIRequest):
             llm="groq/qwen/qwen3-32b"
         )
 
+        # Get language labels
+        language_map = {
+            'python': 'Python', 'javascript': 'JavaScript', 'java': 'Java',
+            'cpp': 'C++', 'c': 'C', 'csharp': 'C#', 'go': 'Go', 'rust': 'Rust',
+            'kotlin': 'Kotlin', 'swift': 'Swift', 'ruby': 'Ruby', 'php': 'PHP',
+            'typescript': 'TypeScript', 'react': 'React', 'angular': 'Angular'
+        }
+        
+        source_lang_label = language_map.get(request.source_language, request.source_language.capitalize())
+        target_lang_labels = [language_map.get(lang, lang.capitalize()) for lang in request.target_languages]
+        
+        # Build task description
+        task_description = f"""
+        Analyze this {source_lang_label} code:
+        ```{request.source_language}
+        {request.prompt}
+        ```
+
+        STEP 1 - {source_lang_label} Analysis:
+        1. Execute the code and show OUTPUT
+        2. Rate quality: X/10 and X%
+        3. Provide {request.num_variations} {source_lang_label} variations (same result, different logic)
+        """
+        
+        if request.target_languages:
+            task_description += f"""
+
+        STEP 2 - Multi-Language Translation:
+        Translate the code to the following languages and provide {request.num_variations} variations for EACH:
+        {', '.join(target_lang_labels)}
+        
+        For each language, provide idiomatic, syntactically correct code that maintains the same logic and output.
+        """
+        else:
+            task_description += """
+
+        STEP 2 - Language Options:
+        Ask: "Would you like this in another language? (Java, JavaScript, C++, Kotlin, Ruby, Go, Rust, Swift, TypeScript, C)"
+        """
+        
+        task_description += "\n\nFormat with clear sections and code blocks."
+        
         # ===================== SINGLE TASK =====================
         analysis_task = Task(
-            description=f"""
-            Analyze this Python code:
-            ```python
-            {request.prompt}
-            ```
-
-            STEP 1 - Python Analysis:
-            1. Execute the code and show OUTPUT
-            2. Rate quality: X/10 and X%
-            3. Provide 10 Python variations (same result, different logic)
-
-            STEP 2 - Language Options:
-            Ask: "Would you like this in another language? (Java, JavaScript, C++, Kotlin, Ruby, Go, Rust, Swift, TypeScript, C)"
-
-            Format with clear sections and code blocks.
-            """,
+            description=task_description,
             agent=code_expert_agent,
-            expected_output="Code output, rating (X/10, X%), 10 Python variations, and language translation offer"
+            expected_output=f"Code output, rating (X/10, X%), {request.num_variations} variations, and translations if requested"
         )
 
         # ===================== CREW EXECUTION =====================

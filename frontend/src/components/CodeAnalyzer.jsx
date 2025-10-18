@@ -7,7 +7,30 @@ export default function CodeAnalyzer({ darkMode }) {
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [sourceLanguage, setSourceLanguage] = useState('python')
+  const [numVariations, setNumVariations] = useState(10)
+  const [targetLanguages, setTargetLanguages] = useState([])
   const messagesEndRef = useRef(null)
+
+  const programmingLanguages = [
+    { value: 'python', label: 'Python' },
+    { value: 'javascript', label: 'JavaScript' },
+    { value: 'java', label: 'Java' },
+    { value: 'cpp', label: 'C++' },
+    { value: 'c', label: 'C' },
+    { value: 'csharp', label: 'C#' },
+    { value: 'go', label: 'Go' },
+    { value: 'rust', label: 'Rust' },
+    { value: 'kotlin', label: 'Kotlin' },
+    { value: 'swift', label: 'Swift' },
+    { value: 'ruby', label: 'Ruby' },
+    { value: 'php', label: 'PHP' },
+    { value: 'typescript', label: 'TypeScript' },
+    { value: 'react', label: 'React' },
+    { value: 'angular', label: 'Angular' }
+  ]
+
+  const availableTargetLanguages = programmingLanguages.filter(lang => lang.value !== sourceLanguage)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -54,18 +77,39 @@ export default function CodeAnalyzer({ darkMode }) {
     return parts.length > 0 ? parts : [{ type: 'text', content: text }]
   }
 
+  const handleTargetLanguageToggle = (langValue) => {
+    setTargetLanguages(prev => 
+      prev.includes(langValue)
+        ? prev.filter(l => l !== langValue)
+        : [...prev, langValue]
+    )
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!input.trim() || loading) return
 
     const userMessage = input.trim()
+    const userSettings = {
+      sourceLanguage,
+      numVariations,
+      targetLanguages
+    }
+    
     setInput('')
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }])
+    setMessages(prev => [...prev, { 
+      role: 'user', 
+      content: userMessage,
+      settings: userSettings
+    }])
     setLoading(true)
 
     try {
       const response = await axios.post('/api/ai/generate', {
-        prompt: userMessage
+        prompt: userMessage,
+        source_language: sourceLanguage,
+        num_variations: numVariations,
+        target_languages: targetLanguages
       })
       
       setMessages(prev => [...prev, {
@@ -183,7 +227,74 @@ export default function CodeAnalyzer({ darkMode }) {
       </div>
 
       {/* Input Area */}
-      <div className="border-t border-gray-200 dark:border-gray-800 py-4">
+      <div className="border-t border-gray-200 dark:border-gray-800 py-4 space-y-3">
+        {/* Configuration Controls */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {/* Source Language */}
+          <div>
+            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+              Source Language
+            </label>
+            <select
+              value={sourceLanguage}
+              onChange={(e) => setSourceLanguage(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={loading}
+            >
+              {programmingLanguages.map(lang => (
+                <option key={lang.value} value={lang.value}>{lang.label}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Number of Variations */}
+          <div>
+            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+              Number of Variations
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="20"
+              value={numVariations}
+              onChange={(e) => setNumVariations(parseInt(e.target.value) || 10)}
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={loading}
+            />
+          </div>
+
+          {/* Target Languages */}
+          <div>
+            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+              Translate To ({targetLanguages.length} selected)
+            </label>
+            <div className="relative">
+              <details className="w-full">
+                <summary className="cursor-pointer rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  Select Languages...
+                </summary>
+                <div className="absolute z-10 mt-1 w-full max-h-48 overflow-auto rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
+                  {availableTargetLanguages.map(lang => (
+                    <label
+                      key={lang.value}
+                      className="flex items-center px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={targetLanguages.includes(lang.value)}
+                        onChange={() => handleTargetLanguageToggle(lang.value)}
+                        className="mr-2"
+                      />
+                      {lang.label}
+                    </label>
+                  ))}
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+
+        {/* Code Input and Submit */}
         <form onSubmit={handleSubmit} className="flex space-x-3">
           <textarea
             value={input}
@@ -194,7 +305,7 @@ export default function CodeAnalyzer({ darkMode }) {
                 handleSubmit(e)
               }
             }}
-            placeholder="Paste your Python code here..."
+            placeholder={`Paste your ${programmingLanguages.find(l => l.value === sourceLanguage)?.label || 'code'} here...`}
             className="flex-1 resize-none rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             rows={3}
             disabled={loading}
@@ -204,7 +315,7 @@ export default function CodeAnalyzer({ darkMode }) {
             disabled={loading || !input.trim()}
             className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-xl font-medium transition-colors"
           >
-            {loading ? 'Analyzing...' : 'Send'}
+            {loading ? 'Analyzing...' : 'Analyze'}
           </button>
         </form>
       </div>
