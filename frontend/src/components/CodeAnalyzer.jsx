@@ -40,6 +40,10 @@ export default function CodeAnalyzer({ darkMode }) {
     scrollToBottom()
   }, [messages])
 
+  useEffect(() => {
+    setTargetLanguages(prev => prev.filter(lang => lang !== sourceLanguage))
+  }, [sourceLanguage])
+
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text)
   }
