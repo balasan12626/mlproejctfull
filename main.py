@@ -7,7 +7,6 @@ from typing import Optional
 import os
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
-import google.generativeai as genai
 from crewai import Agent, Task, Crew
 import pathlib
 
@@ -31,17 +30,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ---------------------------- GEMINI CONFIG ----------------------------
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+# ---------------------------- GROQ CONFIG ----------------------------
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 
-if not GEMINI_API_KEY:
+if not GROQ_API_KEY:
     raise ValueError(
-        "GEMINI_API_KEY environment variable is required. "
+        "GROQ_API_KEY environment variable is required. "
         "Please set it in your Replit Secrets or environment variables."
     )
-
-genai.configure(api_key=GEMINI_API_KEY)
-gemini_model = genai.GenerativeModel('gemini-2.0-flash-exp')
 
 
 # ---------------------------- AUTH HELPERS ----------------------------
@@ -97,8 +93,8 @@ async def hello():
 @app.post("/api/ai/generate", response_model=AIResponse)
 async def generate_ai_response(request: AIRequest):
     try:
-        os.environ["OPENAI_API_KEY"] = GEMINI_API_KEY
-        os.environ["OPENAI_MODEL_NAME"] = "gemini/gemini-2.0-flash-exp"
+        os.environ["OPENAI_API_KEY"] = GROQ_API_KEY
+        os.environ["OPENAI_MODEL_NAME"] = "groq/qwen/qwen3-32b"
 
         # ===================== SINGLE OPTIMIZED AGENT =====================
         code_expert_agent = Agent(
@@ -115,7 +111,7 @@ async def generate_ai_response(request: AIRequest):
             ),
             verbose=False,
             allow_delegation=False,
-            llm="gemini/gemini-2.0-flash-exp"
+            llm="groq/qwen/qwen3-32b"
         )
 
         # ===================== SINGLE TASK =====================
@@ -157,7 +153,7 @@ async def generate_ai_response(request: AIRequest):
 
         return AIResponse(
             response=str(crew_result),
-            model="Code Analyzer + Multi-Language Expert + Gemini 2.5 Flash"
+            model="Code Analyzer + Multi-Language Expert + Groq Qwen3-32B"
         )
 
     except Exception as e:

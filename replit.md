@@ -11,7 +11,7 @@ A complete full-stack AI Code Analyzer application built with FastAPI backend an
 - **Python-Jose**: JWT token generation and validation
 - **Passlib**: Password hashing with bcrypt
 - **CrewAI**: Multi-agent AI orchestration system
-- **Google Generative AI**: Gemini 2.5 Flash model integration
+- **Groq AI**: Qwen3-32B model integration via LiteLLM
 
 ### Frontend
 - **React 18**: UI library
@@ -66,7 +66,7 @@ fullstack-ai-app/
     - Provides 10 different logic variations with same result
     - Offers multi-language translation (Java, JavaScript, C++, Kotlin, Ruby, Go, Rust, Swift, TypeScript, C)
     - Provides 10 variations in requested language
-- **Gemini 2.5 Flash**: Google's latest AI model (gemini-2.0-flash-exp)
+- **Groq Qwen3-32B**: Ultra-fast AI model powered by Groq's LPU inference
 - **Optimized for Free Tier**: Reduced API calls to stay within 50 requests/day limit
 - Real-time code analysis interface
 - Comprehensive code quality assessment
@@ -88,7 +88,7 @@ fullstack-ai-app/
 
 ## Environment Variables
 - `SESSION_SECRET`: Secret key for JWT token signing (managed by Replit Secrets)
-- `GEMINI_API_KEY`: Google Gemini API key (required, managed by Replit Secrets)
+- `GROQ_API_KEY`: Groq API key (required, managed by Replit Secrets)
 
 ### Security Note
 All API keys and secrets are stored securely in Replit Secrets and never hardcoded in the source code. The application will fail to start if required environment variables are missing.
@@ -124,6 +124,12 @@ The application runs automatically via the configured workflow. The workflow:
 - Environment variable validation at startup
 
 ## Recent Changes
+- 2025-10-17: Switched to Groq AI
+  - **Replaced Gemini with Groq**: Changed from Google Gemini to Groq's Qwen3-32B model
+  - **Ultra-Fast Inference**: Groq's LPU provides lightning-fast responses
+  - **Removed Gemini Dependency**: Cleaned up google-generativeai package
+  - **All Logic Preserved**: Same code analysis, ratings, and translations
+
 - 2025-10-17: API Optimization & Error Fixes
   - **Fixed ThreadPoolExecutor Error**: Resolved "cannot schedule new futures after shutdown" by keeping executor context open
   - **Reduced API Calls**: Optimized from 2 agents + polishing to 1 agent (50% fewer API calls)
