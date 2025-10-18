@@ -11,6 +11,7 @@ export default function CodeAnalyzer({ darkMode }) {
   const [sourceLanguage, setSourceLanguage] = useState('python')
   const [numVariations, setNumVariations] = useState(10)
   const [targetLanguages, setTargetLanguages] = useState([])
+  const [copiedIndex, setCopiedIndex] = useState(null)
   const messagesEndRef = useRef(null)
 
   const programmingLanguages = [
@@ -45,8 +46,10 @@ export default function CodeAnalyzer({ darkMode }) {
     setTargetLanguages(prev => prev.filter(lang => lang !== sourceLanguage))
   }, [sourceLanguage])
 
-  const copyToClipboard = (text) => {
+  const copyToClipboard = (text, index) => {
     navigator.clipboard.writeText(text)
+    setCopiedIndex(index)
+    setTimeout(() => setCopiedIndex(null), 2000)
   }
 
   const handleTargetLanguageToggle = (langValue) => {
@@ -141,26 +144,25 @@ export default function CodeAnalyzer({ darkMode }) {
                 }`}>
                   {message.role === 'assistant' ? (
                     <div className="space-y-3">
-                      {message.model && (
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                          {message.model}
-                        </div>
-                      )}
                       <div className="prose prose-sm dark:prose-invert max-w-none">
-                        <ReactMarkdown
-                          components={{
-                            code({node, inline, className, children, ...props}) {
-                              const match = /language-(\w+)/.exec(className || '')
-                              const codeString = String(children).replace(/\n$/, '')
-                              
-                              return !inline && match ? (
-                                <div className="relative group my-4">
-                                  <button
-                                    onClick={() => copyToClipboard(codeString)}
-                                    className="absolute right-2 top-2 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity text-xs z-10"
-                                  >
-                                    Copy
-                                  </button>
+                        {(() => {
+                          let codeBlockCounter = 0
+                          return (
+                            <ReactMarkdown
+                              components={{
+                                code({node, inline, className, children, ...props}) {
+                                  const match = /language-(\w+)/.exec(className || '')
+                                  const codeString = String(children).replace(/\n$/, '')
+                                  const codeBlockId = !inline && match ? `msg-${index}-block-${codeBlockCounter++}` : null
+                                  
+                                  return !inline && match ? (
+                                    <div className="relative group my-4">
+                                      <button
+                                        onClick={() => copyToClipboard(codeString, codeBlockId)}
+                                        className="absolute right-2 top-2 p-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity text-xs z-10"
+                                      >
+                                        {copiedIndex === codeBlockId ? 'Copied!' : 'Copy'}
+                                      </button>
                                   <SyntaxHighlighter
                                     language={match[1]}
                                     style={vscDarkPlus}
@@ -190,11 +192,13 @@ export default function CodeAnalyzer({ darkMode }) {
                             p: ({children}) => <p className="mb-2">{children}</p>,
                             strong: ({children}) => <strong className="font-semibold">{children}</strong>,
                             em: ({children}) => <em className="italic">{children}</em>,
-                            hr: () => <hr className="my-4 border-gray-300 dark:border-gray-700" />,
-                          }}
-                        >
-                          {message.content}
-                        </ReactMarkdown>
+                                hr: () => <hr className="my-4 border-gray-300 dark:border-gray-700" />,
+                              }}
+                            >
+                              {message.content}
+                            </ReactMarkdown>
+                          )
+                        })()}
                       </div>
                     </div>
                   ) : (
@@ -252,7 +256,18 @@ export default function CodeAnalyzer({ darkMode }) {
               min="1"
               max="20"
               value={numVariations}
-              onChange={(e) => setNumVariations(parseInt(e.target.value) || 10)}
+              onChange={(e) => {
+                const val = parseInt(e.target.value)
+                if (isNaN(val)) {
+                  setNumVariations(1)
+                } else if (val < 1) {
+                  setNumVariations(1)
+                } else if (val > 20) {
+                  setNumVariations(20)
+                } else {
+                  setNumVariations(val)
+                }
+              }}
               className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-2 sm:px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={loading}
             />
