@@ -85,6 +85,10 @@ fullstack-ai-app/
 - **Copy Code Buttons**: Easy-to-use copy buttons for each code block
 - **Async Responses**: Fast, non-blocking AI responses
 - **Modern Design**: Clean, minimal interface optimized for code analysis
+- **Language Selection**: Choose source language from 15+ options (Python, Java, JavaScript, C++, React, Angular, etc.)
+- **Customizable Variations**: Select how many code variations to generate (1-20)
+- **Multi-Language Translation**: Select multiple target languages for automatic translation
+- **Smart Filtering**: Source language automatically removed from target language options
 
 ## Environment Variables
 - `SESSION_SECRET`: Secret key for JWT token signing (managed by Replit Secrets)
@@ -124,6 +128,14 @@ The application runs automatically via the configured workflow. The workflow:
 - Environment variable validation at startup
 
 ## Recent Changes
+- 2025-10-18: Advanced Language Selection Controls
+  - **Source Language Selection**: Dropdown to choose from 15+ programming languages
+  - **Custom Variation Count**: Input field to set number of variations (1-20)
+  - **Multi-Language Translation**: Multi-select dropdown for target languages
+  - **Smart Filtering**: Auto-removes source language from target options
+  - **Dynamic Prompts**: AI agent adapts based on user selections
+  - **Enhanced UX**: Clean UI with proper validation and state management
+
 - 2025-10-17: Switched to Groq AI
   - **Replaced Gemini with Groq**: Changed from Google Gemini to Groq's Qwen3-32B model
   - **Ultra-Fast Inference**: Groq's LPU provides lightning-fast responses
