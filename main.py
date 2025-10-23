@@ -98,16 +98,26 @@ async def generate_ai_response(request: AIRequest):
 
         # ===================== SINGLE OPTIMIZED AGENT =====================
         code_expert_agent = Agent(
-            role="Expert Code Analyst & Multi-Language Translator",
+            role="Senior FastAPI Backend Developer & Code Architect",
             goal=(
-                "Analyze Python code, execute it, rate quality (X/10 and X%), provide 10 Python variations, "
-                "then ask if user wants translations to other languages (Java, JavaScript, C++, etc.) "
-                "and provide 10 variations in the requested language."
+                "Act as a 10-year experienced FastAPI backend developer. For EVERY code snippet, provide: "
+                "1) Execution output, 2) Quality rating (X/10 and X%), 3) Time complexity analysis, "
+                "4) Space complexity analysis, 5) Line-by-line explanation, 6) Best practices & tips, "
+                "7) Code variations, 8) Multi-language translations if requested. "
+                "ONLY answer coding-related questions."
             ),
             backstory=(
-                "You are a world-class software engineer with 20+ years of experience across all major programming languages. "
-                "You analyze code execution, evaluate quality, generate logic variations, and translate between languages "
-                "while preserving exact behavior and output. You provide clear, structured responses with code blocks."
+                "You are a senior backend developer with 10+ years of FastAPI, Python, and full-stack experience. "
+                "For every code you analyze, you MUST provide: "
+                "• **Time Complexity**: Big-O notation (O(1), O(n), O(log n), etc.) with clear explanation "
+                "• **Space Complexity**: Memory usage analysis with Big-O notation "
+                "• **Line-by-Line Explanation**: Simple, beginner-friendly explanation of each code line "
+                "• **Best Practices & Tips**: Professional advice on optimization, patterns, and improvements "
+                "• **Code Output**: Simulated execution results with sample inputs and expected outputs "
+                "• **Performance Analysis**: Bottlenecks, optimizations, and algorithmic improvements "
+                ""
+                "You ONLY respond to coding, programming, algorithms, and technical questions. "
+                "For non-coding questions, politely redirect: 'I only assist with coding-related questions.'"
             ),
             verbose=False,
             allow_delegation=False,
@@ -132,35 +142,107 @@ async def generate_ai_response(request: AIRequest):
         {request.prompt}
         ```
 
-        STEP 1 - {source_lang_label} Analysis:
-        1. Execute the code and show OUTPUT
-        2. Rate quality: X/10 and X%
-        3. Provide {request.num_variations} {source_lang_label} variations (same result, different logic)
+        MANDATORY ANALYSIS FORMAT FOR THIS CODE:
+
+        ## 1. Code Execution & Output
+        - Simulate code execution and show the expected output
+        - Provide sample inputs and their expected results
+        - If code has errors, explain them clearly
+
+        ## 2. Quality Rating
+        - Overall Rating: X/10 (X%)
+        - Strengths: (list 3-5 points)
+        - Weaknesses/Areas to improve: (list 2-3 points)
+
+        ## 3. Time Complexity Analysis
+        - **Time Complexity**: O(?) - Explain which operations dominate
+        - Breakdown: Explain complexity of each major operation
+        - Example: "Loop iterates n times = O(n), dictionary lookup = O(1), overall = O(n)"
+
+        ## 4. Space Complexity Analysis  
+        - **Space Complexity**: O(?) - Explain memory usage
+        - Variables/data structures and their memory impact
+        - Example: "Array of size n = O(n), constant variables = O(1), overall = O(n)"
+
+        ## 5. Line-by-Line Explanation
+        For EVERY line of code, explain in simple terms:
+        - Line 1: [what this line does in beginner-friendly language]
+        - Line 2: [explanation]
+        - etc.
+
+        ## 6. Best Practices & Tips
+        - Performance optimization suggestions
+        - Code readability improvements
+        - Pythonic/idiomatic patterns
+        - Security considerations
+        - Error handling recommendations
+
+        ## 7. Code Variations ({request.num_variations} variations)
+        Provide {request.num_variations} different approaches that produce the SAME output:
+        - Variation 1: [brief description of approach]
+        ```{request.source_language}
+        [code]
+        ```
+        Time: O(?), Space: O(?)
+
+        ## 8. Performance Comparison
+        - Compare variations by speed and memory
+        - Recommend best approach for different scenarios
         """
         
         if request.target_languages:
+            translations_format = ""
+            for lang_label in target_lang_labels:
+                translations_format += f"""
+        
+        ### {lang_label} Translation
+        Provide {request.num_variations} variations in {lang_label}:
+        
+        **Variation 1**: [description]
+        ```{lang_label.lower()}
+        [code]
+        ```
+        - **Time**: O(?)
+        - **Space**: O(?)
+        - **Key Differences from {source_lang_label}**: [explain syntax/pattern differences]
+        - **Best Practices**: [language-specific tips]
+        """
+            
             task_description += f"""
 
-        STEP 2 - Multi-Language Translation:
-        Translate the code to the following languages and provide {request.num_variations} variations for EACH:
-        {', '.join(target_lang_labels)}
-        
-        For each language, provide idiomatic, syntactically correct code that maintains the same logic and output.
+        ## 9. Multi-Language Translation
+        Translate to ALL of these languages: {', '.join(target_lang_labels)}
+        {translations_format}
         """
         else:
             task_description += """
 
-        STEP 2 - Language Options:
-        Ask: "Would you like this in another language? (Java, JavaScript, C++, Kotlin, Ruby, Go, Rust, Swift, TypeScript, C)"
+        ## 9. Translation Options
+        Ask: "Would you like this translated to another language? 
+        Available: Java, JavaScript, C++, Kotlin, Ruby, Go, Rust, Swift, TypeScript, C"
         """
         
-        task_description += "\n\nFormat with clear sections and code blocks."
+        task_description += """
+        
+        IMPORTANT RULES:
+        - If the user asks a NON-CODING question, respond: "I only assist with coding-related questions. Please ask about code, algorithms, or programming."
+        - Always provide time/space complexity for EVERY code snippet
+        - Explain code in simple, beginner-friendly terms
+        - Use markdown formatting with code blocks
+        - Include actual executable code examples
+        """
         
         # ===================== SINGLE TASK =====================
         analysis_task = Task(
             description=task_description,
             agent=code_expert_agent,
-            expected_output=f"Code output, rating (X/10, X%), {request.num_variations} variations, and translations if requested"
+            expected_output=(
+                f"Complete analysis with: 1) Code execution output, 2) Quality rating (X/10, X%), "
+                f"3) Time complexity (O-notation), 4) Space complexity (O-notation), "
+                f"5) Line-by-line explanation, 6) Best practices & tips, "
+                f"7) {request.num_variations} code variations with complexity analysis, "
+                f"8) Performance comparison, 9) Multi-language translations if requested with complexity for each"
+            )
         )
 
         # ===================== CREW EXECUTION =====================
